@@ -10,11 +10,14 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   message = FALSE
 )
+```
+```{r libraries}
 library(dplyr)
 library(ggplot2)
 library(knitr)
@@ -22,7 +25,7 @@ library(tidyr)
 library(salem)
 ```
 
-The [Salem Witchcraft Website](https://www.tulane.edu/~salem/index.html)
+The [Salem Witchcraft Website] (https://www2.tulane.edu/~salem/index.html)
 presents a number of data analyses and explains how to reproduce them
 using Excel. This vignette will document how to as closely as possible
 reproduce those analyses using R.  In some cases the analyses will be 
@@ -72,7 +75,7 @@ ggplot(data = accused_witches) +
        salem_theme
 
 table(accused_witches$Month.of.Accusation.Name, useNA = "ifany", 
-      dnn = "Month") %>% kable(caption = "Accusations by Month")
+      dnn = "Month") |> kable(caption = "Accusations by Month")
 
 ```
 
@@ -90,7 +93,7 @@ ggplot(data = accused_witches) +
                                      "Jun", "Jul","Aug", "Sept", "Oct", "Nov", "Dec") )
 
 
-cumsum(table(accused_witches$Month.of.Accusation.Name)) %>% kable()
+cumsum(table(accused_witches$Month.of.Accusation.Name)) |> kable()
 
 ```
 
@@ -102,13 +105,13 @@ website. These examples show three possible ways to display the Pareto
 histogram.  As usual there are other approaches. 
 
 ```{r message=FALSE, fig.width=5}
-monthly_accusations <- accused_witches %>% 
-                      filter(!is.na(Month.of.Accusation)) %>%
-                      group_by(Month.of.Accusation.Name) %>%
-                      summarize(number = n()) %>% 
+monthly_accusations <- accused_witches |> 
+                      filter(!is.na(Month.of.Accusation)) |>
+                      group_by(Month.of.Accusation.Name) |>
+                      summarize(number = n()) |> 
                       mutate(cumulative = cumsum(number) )
 
-monthly_accusations %>% kable(caption = "Accusations by Month")
+monthly_accusations |> kable(caption = "Accusations by Month")
 
 ggplot(data = monthly_accusations) +
              aes(x = Month.of.Accusation.Name, y = cumulative, group =1) +
@@ -118,12 +121,12 @@ ggplot(data = monthly_accusations) +
              salem_theme
 
 
- monthly_accusations %>% 
-             arrange(desc(number))  %>% 
+ monthly_accusations |> 
+             arrange(desc(number))  |> 
             mutate(Month.of.Accusation.Name = 
                    factor(Month.of.Accusation.Name, 
-                         levels=Month.of.Accusation.Name)) %>%
-            mutate(pareto_cumulative = cumsum(number) ) %>%
+                         levels=Month.of.Accusation.Name)) |>
+            mutate(pareto_cumulative = cumsum(number) ) |>
         ggplot() +
              aes(x = Month.of.Accusation.Name, y = number) +
              geom_col() +
@@ -131,30 +134,32 @@ ggplot(data = monthly_accusations) +
              salem_theme
 
 
-monthly_accusations %>% 
-            arrange(desc(number))  %>% 
+monthly_accusations |> 
+            arrange(desc(number))  |> 
             mutate(Month.of.Accusation.Name = 
                    factor(Month.of.Accusation.Name, 
-                         levels=Month.of.Accusation.Name)) %>%
-            mutate(pareto_cumulative = cumsum(number) ) %>%
+                         levels=Month.of.Accusation.Name)) |>
+            mutate(pareto_cumulative = cumsum(number) ) |>
         ggplot() +
              aes(x = Month.of.Accusation.Name, y = pareto_cumulative) +
              geom_point( ) +
-             geom_path(aes(y=pareto_cumulative, group=1), colour="blue", lty=3, size=0.9) +
+             geom_path(aes(y=pareto_cumulative, group=1), colour="blue", lty=3, 
+                       linewidth= 0.9) +
              labs(title = "Pareto Cumulative Distribution of Accusations by Month") +
              salem_theme
 
 
- monthly_accusations %>% 
-             arrange(desc(number))  %>% 
+ monthly_accusations |> 
+             arrange(desc(number))  |> 
             mutate(Month.of.Accusation.Name = 
                    factor(Month.of.Accusation.Name, 
-                         levels = Month.of.Accusation.Name)) %>%
-            mutate(pareto_cumulative = cumsum(number) ) %>%
+                         levels = Month.of.Accusation.Name)) |>
+            mutate(pareto_cumulative = cumsum(number) ) |>
         ggplot() +
              aes(x = Month.of.Accusation.Name, y = number) +
              geom_col() +
-             geom_path(aes(y=pareto_cumulative, group = 1), colour = "blue", lty=3, size=0.9) +
+             geom_path(aes(y=pareto_cumulative, group = 1), colour = "blue", 
+                       lty = 3, linewidth = 0.9) +
              labs(title = "Pareto Histogram of Accusations by Month") +
              salem_theme
 
@@ -180,7 +185,7 @@ ggplot(data = na.omit(accused_witches)) +
 
 
 table(accused_witches$Month.of.Execution.Name, useNA = "ifany", 
-      dnn = "Month") %>% kable(caption = "Executions by Month")
+      dnn = "Month") |> kable(caption = "Executions by Month")
 
 ```
 
@@ -194,17 +199,17 @@ a monthly data set.
 
 ```{r fig.width=6}
 
-monthly_accused <- accused_witches %>% 
-                      filter(!is.na(Month.of.Accusation)) %>%
-                      group_by(Month.of.Accusation.Name) %>%
-                      summarize(accusations = n())  %>%
+monthly_accused <- accused_witches |> 
+                      filter(!is.na(Month.of.Accusation)) |>
+                      group_by(Month.of.Accusation.Name) |>
+                      summarize(accusations = n())  |>
                       rename(Month = Month.of.Accusation.Name)
-monthly_executed <- accused_witches %>% 
-                      filter(!is.na(Month.of.Execution)) %>%
-                      group_by(Month.of.Execution.Name) %>%
-                      summarize(executions = n()) %>%
+monthly_executed <- accused_witches |> 
+                      filter(!is.na(Month.of.Execution)) |>
+                      group_by(Month.of.Execution.Name) |>
+                      summarize(executions = n()) |>
                       rename(Month = Month.of.Execution.Name)
-monthly_data <- left_join(monthly_accused, monthly_executed) %>%
+monthly_data <- left_join(monthly_accused, monthly_executed) |>
                           mutate(executions = 
                                    ifelse(is.na(executions), 0, executions))
 
@@ -238,10 +243,10 @@ varying intensity in the different towns.  This can also be shown using
 a univariate table (or dplyr::summarize())
 
 ```{r}
-table(accused_witches$Residence, dnn = "Residence") %>% 
+table(accused_witches$Residence, dnn = "Residence") |> 
   kable(caption = "Residences of Accused")
 
-accused_witches %>% group_by(Residence) %>% summarize(number = n()) %>% 
+accused_witches |> group_by(Residence) |> summarize(number = n()) |> 
      kable(caption = "Residences of Accused")
 
 ```
@@ -259,7 +264,7 @@ place names has been removed.
 
 ```{r fig.width=5}
 
-accused_witches %>% filter(Residence == "Andover") %>%
+accused_witches |> filter(Residence == "Andover") |>
    ggplot() +
    aes(x = Month.of.Accusation.Name) +
    geom_bar() +
@@ -273,7 +278,7 @@ To help make this more visible we can add a vline.
 
 ```{r fig.width=5}
 
-accused_witches %>% filter(Residence == "Andover") %>%
+accused_witches |> filter(Residence == "Andover") |>
    ggplot() +
    aes(x = Month.of.Accusation.Name) +
    geom_bar() +
@@ -290,7 +295,7 @@ Alternatively, we can use faceting to show all of the histograms.
 
 ```{r fig.width=6, fig.height=8}
 
-accused_witches %>% 
+accused_witches |> 
    ggplot() +
    aes(x = Month.of.Accusation.Name) +
    geom_bar() +
@@ -333,7 +338,7 @@ had an accusation.
 
 ```{r}
 
-newdata <- salem_region %>% mutate(February.Any = February > 0, March.Any = March > 0,
+newdata <- salem_region |> mutate(February.Any = February > 0, March.Any = March > 0,
                                    April.Any = April > 0, May.Any = May > 0,
                                    June.Any = June > 0, July.Any = July > 0,
                                    August.Any = August > 0, 
@@ -342,26 +347,58 @@ newdata <- salem_region %>% mutate(February.Any = February > 0, March.Any = Marc
                                    November.Any = November > 0)
 
 newdata$TOWN_LABEL <- ifelse(newdata$n_accused == 0, NA,  newdata$TOWN_LABEL)
+
+```
+```{r}
+
+
 ```
 
-```{r fig.width=8, fig.height=8}
+Here `requireNamespace` is used to check whether the `sf` package is installed.
+That is because `sf` is only suggested and not required. It can be complex to
+install on some computers.
+
+```{r  eval=FALSE, fig.width=8, fig.height=8}
+
 if (requireNamespace("sf", quietly = TRUE)) {
+     library(sf)
       p1 <- ggplot(newdata) 
-      p2 <- geom_sf_text(aes(label = TOWN_LABEL), color = "blue", size = 2, nudge_x = 5,
-                      nudge_y = 5, na.rm = TRUE) 
+      p2 <- geom_sf_text(aes(label = TOWN_LABEL), color = "blue", size = 2, 
+                              nudge_x = 5,
+                               nudge_y = 5, na.rm = TRUE) 
       p3 <-       scale_fill_manual(values = c( "grey", "red"), na.value = "white") 
-      
-      p1  + geom_sf(data = newdata,  aes(fill = February.Any), color = "black", size = .1) +
+}
+
+```
+```{r eval=FALSE,fig.width=8, fig.height=8}
+if (requireNamespace("sf", quietly = TRUE)) {
+
+      p1  + geom_sf(data = newdata,  
+                    aes(geometry = newdata$geometry,  fill = February.Any
+                        ), color = "black", 
+                    size = .1) +
         p3 + p2 + labs(title = "Location of Accusations in February") 
-      
-      p1 +  geom_sf(data = newdata,  aes(fill = July.Any), color = "black", size = .1) +
+}
+
+if (requireNamespace("sf", quietly = TRUE)) {
+      library(sf)
+      p1 +  geom_sf(data = newdata, 
+                    aes(geometry = geometry, fill = July.Any), 
+                    color = "black", size = .1) +
         p3 + p2 + labs(title = "Location of Accusations in July") 
-      
-      
-      p1 + geom_sf(data = newdata,  aes(fill = August.Any), color = "black", size = .1) +
+}  
+```
+```{r eval=FALSE,fig.width=8, fig.height=8}
+ if (requireNamespace("sf", quietly = TRUE)) {     
+      p1 + geom_sf(data = newdata,  
+                   aes(fill = August.Any, geometry = geometry), color = "black", 
+                   size = .1) +
         p3 + p2  + labs(title = "Location of Accusations in August") 
-      
-      p1 + geom_sf(data = newdata,  aes(fill = November.Any), color = "black", size = .1) +
+ }
+if (requireNamespace("sf", quietly = TRUE)) {
+      p1 + geom_sf(data = newdata,  aes(fill = November.Any, geometry = geometry), color = "black",
+                   
+                   size = .1) +
         p3 + p2 + labs(title = "Location of Accusations in November") 
 }
 ```
@@ -440,7 +477,7 @@ addmargins( table(salem_village$Petition, salem_village$Church.to.1696,
 
 As explained on the website, the Village of Salem was governed by a Committee of 
 Five in addition to the Town Meeting 
-[see Salem Village Politics](https://www.tulane.edu/~salem/Politics%20Intro.html).
+[see Salem Village Politics](https://www2.tulane.edu/~salem/Politics%20Intro.html).
 
 The data set that is part of this package called committee_list is 
 structured differently than the original data. It is in "long" format with
@@ -474,10 +511,10 @@ table( committee_list$Petition, committee_list$Social )
 
 To adjust for this and get the data matching the website
 we need to remove those duplicates. Then the table matches that found at
-[Committee Social Report](https://www.tulane.edu/~salem/Committeemen%20Social%20Report.html).
+[Committee Social Report](https://www2.tulane.edu/~salem/Committeemen%20Social%20Report.html).
 
 ```{r}
-committee_list2 <-  committee_list %>% group_by(Committee.Members) %>% 
+committee_list2 <-  committee_list |> group_by(Committee.Members) |> 
                              summarize(Social = first(Social), 
                                        Petition = first(Petition),
                                        Terms = n())
@@ -490,7 +527,7 @@ addmargins(table( committee_list2$Petition, committee_list2$Social ))
 
 The tax_comparison data set is also set up in long format. This can then be
 used to create a comparison table similar to the table on 
-[Tax Comparison](https://www.tulane.edu/~salem/1690%20Tax%20Comparisons.html).
+[Tax Comparison](https://www2.tulane.edu/~salem/1690%20Tax%20Comparisons.html).
 One limitation is that R does not have a built in function for the mode.
 
 This is the most complex analysis on the website. Complications include
@@ -503,7 +540,7 @@ at both group and individual level comparisons and individual level mobility.
 Here is the distribution of tax payers by year.
 
 ```{r}
-table(tax_comparison$Year, dnn = c("Year")) %>% kable(caption = "Tax payers by year")
+table(tax_comparison$Year, dnn = c("Year")) |> kable(caption = "Tax payers by year")
 ```
 
 The next table summarizes descriptive statistics for all of the years. The
@@ -519,20 +556,20 @@ The first table is for everyone in a year. The second separates the
 data based on which petition the tax payer signed (or if they) did not sign.
 
 ```{r}
-tax_comparison %>% group_by(Year) %>%
+tax_comparison |> group_by(Year) |>
             summarize(mean = round(mean(Tax), 1), median = round(median(Tax), 1),
                                    minimum = min(Tax),
                       maximum =  max(Tax), range = maximum - minimum, 
-                      sum = sum(Tax), Count = n()) %>% 
+                      sum = sum(Tax), Count = n()) |> 
                       kable(caption = "Taxes paid by year")
 
 
 
-tax_comparison %>% group_by(Year, Petition) %>%
+tax_comparison |> group_by(Year, Petition) |>
             summarize(mean = round(mean(Tax), 1), median = round(median(Tax), 1),
                                    minimum = min(Tax),
                       maximum =  max(Tax), range = maximum - minimum, 
-                      sum = sum(Tax), Tax_payers = n()) %>% 
+                      sum = sum(Tax), Tax_payers = n()) |> 
                       kable(caption = "Taxes paid by year and petition signed")
 ```
 
@@ -541,7 +578,7 @@ graph the values over time.  In this case, we will first make a data set
 of statistics to work with.
 
 ```{r fig.width=5}
-yearly_tax <- tax_comparison %>% group_by(Year, Petition) %>%
+yearly_tax <- tax_comparison |> group_by(Year, Petition) |>
             summarize(mean = round(mean(Tax), 1), median = round(median(Tax), 1),
                                    minimum = min(Tax),
                       maximum =  max(Tax), range = maximum - minimum, 
@@ -565,12 +602,12 @@ less than one means that the Anti-Parris group had a higher median.
 
 ```{r fig.width=5}
 
-ratios <- yearly_tax %>% filter(Petition %in% c("Pro-P", "Anti-P")) %>%
-                   select(Year, Petition, median) %>% 
+ratios <- yearly_tax |> filter(Petition %in% c("Pro-P", "Anti-P")) |>
+                   select(Year, Petition, median) |> 
                    pivot_wider(id_cols = c(Year), values_from = median, 
-                               names_from = Petition) %>% 
+                               names_from = Petition) |> 
                     mutate(median_ratio = `Pro-P`/`Anti-P`)
-ratios %>% kable()
+ratios |> kable()
 ggplot(ratios, 
         aes(x = Year, y = median_ratio)) +
         geom_point() +
@@ -584,12 +621,12 @@ ggplot(ratios,
 The same analysis can be done but substituting mean for median.
 
 ```{r}
-ratios <- yearly_tax %>% filter(Petition %in% c("Pro-P", "Anti-P")) %>%
-                   select(Year, Petition, mean) %>% 
+ratios <- yearly_tax |> filter(Petition %in% c("Pro-P", "Anti-P")) |>
+                   select(Year, Petition, mean) |> 
                    pivot_wider(id_cols = c(Year), values_from = mean, 
-                               names_from = Petition) %>% 
+                               names_from = Petition) |> 
                     mutate(mean_ratio = `Pro-P`/`Anti-P`)
-ratios %>% kable()
+ratios |> kable()
 ggplot(ratios, 
         aes(x = Year, y = mean_ratio)) +
         geom_point() +
@@ -611,18 +648,18 @@ purposes. The example below is not necessarily the best or most efficient.
 To do the analysis we need to obtain the rank and percentile for each
 of the tax amounts within the years.  Finally, we need to compare those. 
 In this example we will focus on the 
-[1681-1690 comparison shown](https://www.tulane.edu/~salem/1681-90%20Rank.html) 
+[1681-1690 comparison shown](https://www2.tulane.edu/~salem/1681-90%20Rank.html) 
 while providing a framework for the others.
 
 First create a wide data set and calculate ranks and cumulative proportions. 
 This allows viewing and sorting of individuals for specific years.
 
 ```{r}
-persisters <- tax_comparison %>% pivot_wider(id_cols = c(Name, Petition),
+persisters <- tax_comparison |> pivot_wider(id_cols = c(Name, Petition),
                                              names_from = Year,
                                              names_prefix = "X",
                                              values_from = Tax
-                                             ) %>%
+                                             ) |>
                                  relocate(X1681, .before = X1690) 
 
 ```
@@ -640,13 +677,13 @@ of tax payers in that year.
 
 ```{r}
 
-comparison <- persisters %>% 
+comparison <- persisters |> 
                     mutate(across(starts_with("X"), 
                                                list(
                                                     rank = min_rank
                                                     )
-                                        )) %>%
-                   filter(!is.na(X1690) & !is.na(X1681)) %>%
+                                        )) |>
+                   filter(!is.na(X1690) & !is.na(X1681)) |>
                    mutate(
                          X1690_ptile = 100 * (X1690_rank - 1)/100,
                          X1681_ptile = 100* (X1681_rank - 1)/94,
@@ -659,7 +696,7 @@ comparison <- persisters %>%
                     ) 
 
 table(comparison$compare_1681_1690, comparison$Petition, 
-      dnn = c("Change", "Petition")) %>%
+      dnn = c("Change", "Petition")) |>
       kable(caption = "Change in position 1681-1690")
 
 
